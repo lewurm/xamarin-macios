@@ -1609,6 +1609,9 @@ interp_entry (InterpEntryData *data)
 static stackval * 
 do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 {
+	MonoLMFExt ext;
+	interp_push_lmf (&ext, context->current_frame);
+
 	switch (op) {
 	case MINT_ICALL_V_V: {
 		void (*func)(void) = ptr;
@@ -1672,6 +1675,7 @@ do_icall (ThreadContext *context, int op, stackval *sp, gpointer ptr)
 		g_assert_not_reached ();
 	}
 
+	interp_pop_lmf (&ext);
 	return sp;
 }
 
