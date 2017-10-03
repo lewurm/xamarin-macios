@@ -3850,13 +3850,10 @@ mini_init (const char *filename, const char *runtime_version)
 	callbacks.create_remoting_trampoline = mono_jit_create_remoting_trampoline;
 #endif
 #endif
-<<<<<<< HEAD
-=======
 #if !defined (DISABLE_INTERPRETER) && !defined (DISABLE_REMOTING)
 	if (mono_use_interpreter)
 		callbacks.interp_get_remoting_invoke = mono_interp_get_remoting_invoke;
 #endif
->>>>>>> 4e01b276ae0... [interp] enable it by default in configure (#5925)
 
 	mono_install_callbacks (&callbacks);
 
