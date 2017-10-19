@@ -1771,7 +1771,7 @@ handle_exception_first_pass (MonoContext *ctx, MonoObject *obj, gint32 *out_filt
 
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
 #ifndef DISABLE_PERFCOUNTERS
-					InterlockedIncrement (&mono_perfcounters->exceptions_filters);
+					mono_atomic_inc_i32 (&mono_perfcounters->exceptions_filters);
 #endif
 
 					if (!ji->is_interp) {
@@ -2240,7 +2240,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					}
 					mono_set_lmf (lmf);
 #ifndef DISABLE_PERFCOUNTERS
-					InterlockedAdd (&mono_perfcounters->exceptions_depth, frame_count);
+					mono_atomic_fetch_add_i32 (&mono_perfcounters->exceptions_depth, frame_count);
 #endif
 					if (obj == (MonoObject *)domain->stack_overflow_ex)
 						jit_tls->handling_stack_ovf = FALSE;
@@ -2262,7 +2262,7 @@ mono_handle_exception_internal (MonoContext *ctx, MonoObject *obj, gboolean resu
 					MONO_PROFILER_RAISE (exception_clause, (method, i, ei->flags, ex_obj));
 					jit_tls->orig_ex_ctx_set = FALSE;
 #ifndef DISABLE_PERFCOUNTERS
-					InterlockedIncrement (&mono_perfcounters->exceptions_finallys);
+					mono_atomic_inc_i32 (&mono_perfcounters->exceptions_finallys);
 #endif
 				}
 				if (ei->flags == MONO_EXCEPTION_CLAUSE_FAULT || ei->flags == MONO_EXCEPTION_CLAUSE_FINALLY) {
@@ -2367,7 +2367,7 @@ mono_handle_exception (MonoContext *ctx, MonoObject *obj)
 	MONO_REQ_GC_UNSAFE_MODE;
 
 #ifndef DISABLE_PERFCOUNTERS
-	InterlockedIncrement (&mono_perfcounters->exceptions_thrown);
+	mono_atomic_inc_i32 (&mono_perfcounters->exceptions_thrown);
 #endif
 
 	return mono_handle_exception_internal (ctx, obj, FALSE, NULL);

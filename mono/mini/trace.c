@@ -407,7 +407,7 @@ mono_trace_enter_method (MonoMethod *method, char *ebp)
 	if (!trace_spec.enabled)
 		return;
 
-	while (output_lock != 0 || InterlockedCompareExchange (&output_lock, 1, 0) != 0)
+	while (output_lock != 0 || mono_atomic_cas_i32 (&output_lock, 1, 0) != 0)
 		mono_thread_info_yield ();
 
 	fname = mono_method_full_name (method, TRUE);
@@ -578,7 +578,7 @@ mono_trace_leave_method (MonoMethod *method, ...)
 	if (!trace_spec.enabled)
 		return;
 
-	while (output_lock != 0 || InterlockedCompareExchange (&output_lock, 1, 0) != 0)
+	while (output_lock != 0 || mono_atomic_cas_i32 (&output_lock, 1, 0) != 0)
 		mono_thread_info_yield ();
 
 	va_start(ap, method);
