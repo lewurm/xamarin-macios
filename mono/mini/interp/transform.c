@@ -1368,6 +1368,9 @@ get_basic_blocks (TransformData *td)
 		default:
 			g_assert_not_reached ();
 		}
+
+		if (i == CEE_THROW)
+			cbb = get_bb (td, NULL, ip);
 	}
 }
 
@@ -3692,13 +3695,23 @@ generate (MonoMethod *method, InterpMethod *rtm, unsigned char *is_bb_start, Mon
 			break;
 		case CEE_LEAVE:
 			td->sp = td->stack;
-			handle_branch (td, MINT_LEAVE_S, MINT_LEAVE, 5 + read32 (td->ip + 1));
+			if (td->clause_indexes [in_offset] != -1) {
+				/* LEAVE instructions in catch clauses need to check for abort exceptions */
+				handle_branch (td, MINT_LEAVE_S_CHECK, MINT_LEAVE_CHECK, 5 + read32 (td->ip + 1));
+			} else {
+				handle_branch (td, MINT_LEAVE_S, MINT_LEAVE, 5 + read32 (td->ip + 1));
+			}
 			td->ip += 5;
 			generating_code = 0;
 			break;
 		case CEE_LEAVE_S:
 			td->sp = td->stack;
-			handle_branch (td, MINT_LEAVE_S, MINT_LEAVE, 2 + (gint8)td->ip [1]);
+			if (td->clause_indexes [in_offset] != -1) {
+				/* LEAVE instructions in catch clauses need to check for abort exceptions */
+				handle_branch (td, MINT_LEAVE_S_CHECK, MINT_LEAVE_CHECK, 2 + (gint8)td->ip [1]);
+			} else {
+				handle_branch (td, MINT_LEAVE_S, MINT_LEAVE, 2 + (gint8)td->ip [1]);
+			}
 			td->ip += 2;
 			generating_code = 0;
 			break;
