@@ -4177,8 +4177,10 @@ generate (MonoMethod *method, InterpMethod *rtm, unsigned char *is_bb_start, Mon
 		printf("Runtime method: %s %p, VT stack size: %d\n", mono_method_full_name (method, TRUE), rtm, td->max_vt_sp);
 		printf("Calculated stack size: %d, stated size: %d\n", td->max_stack_height, header->max_stack);
 		while (p < td->new_ip) {
-			p = mono_interp_dis_mintop(td->new_code, p);
-			printf("\n");
+			char *ins = mono_interp_dis_mintop (td->new_code, p);
+			g_print ("%s\n", ins);
+			g_free (ins);
+			p = mono_interp_dis_mintop_len (p);
 		}
 	}
 	g_assert (td->max_stack_height <= (header->max_stack + 1));
