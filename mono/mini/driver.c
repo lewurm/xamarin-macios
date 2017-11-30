@@ -56,6 +56,8 @@
 #include "mini.h"
 #include "jit.h"
 #include "aot-compiler.h"
+#include "aot-runtime.h"
+#include "mini-runtime.h"
 #include "interp/interp.h"
 
 #include <string.h>

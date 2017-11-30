@@ -76,6 +76,8 @@
 #include <ctype.h>
 #include "trace.h"
 #include "version.h"
+#include "aot-compiler.h"
+#include "aot-runtime.h"
 
 #include "jit-icalls.h"
 
@@ -83,6 +85,7 @@
 #include "mini-llvm.h"
 #include "debugger-agent.h"
 #include "lldb.h"
+#include "mini-runtime.h"
 
 #ifdef MONO_ARCH_LLVM_SUPPORTED
 #ifdef ENABLE_LLVM
