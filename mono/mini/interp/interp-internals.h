@@ -9,6 +9,7 @@
 #include <mono/metadata/class-internals.h>
 #include <mono/metadata/debug-internals.h>
 #include "config.h"
+#include "interp.h"
 
 enum {
 	VAL_I32     = 0,
