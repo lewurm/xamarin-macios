@@ -2180,58 +2180,6 @@ jinfo_get_method (MonoJitInfo *ji)
 	return mono_jit_info_get_method (ji);
 }
 
-<<<<<<< HEAD
-/* AOT */
-void      mono_aot_init                     (void);
-void      mono_aot_cleanup                  (void);
-gpointer  mono_aot_get_method_checked       (MonoDomain *domain,
-											 MonoMethod *method, MonoError *error);
-gpointer  mono_aot_get_method_from_token    (MonoDomain *domain, MonoImage *image, guint32 token, MonoError *error);
-gboolean  mono_aot_is_got_entry             (guint8 *code, guint8 *addr);
-guint8*   mono_aot_get_plt_entry            (guint8 *code);
-guint32   mono_aot_get_plt_info_offset      (mgreg_t *regs, guint8 *code);
-gboolean  mono_aot_get_cached_class_info    (MonoClass *klass, MonoCachedClassInfo *res);
-gboolean  mono_aot_get_class_from_name      (MonoImage *image, const char *name_space, const char *name, MonoClass **klass);
-MonoJitInfo* mono_aot_find_jit_info         (MonoDomain *domain, MonoImage *image, gpointer addr);
-gpointer mono_aot_plt_resolve               (gpointer aot_module, guint32 plt_info_offset, guint8 *code, MonoError *error);
-void     mono_aot_patch_plt_entry           (guint8 *code, guint8 *plt_entry, gpointer *got, mgreg_t *regs, guint8 *addr);
-gpointer mono_aot_get_method_from_vt_slot   (MonoDomain *domain, MonoVTable *vtable, int slot, MonoError *error);
-gpointer mono_aot_create_specific_trampoline   (MonoImage *image, gpointer arg1, MonoTrampolineType tramp_type, MonoDomain *domain, guint32 *code_len);
-gpointer mono_aot_get_trampoline            (const char *name);
-gpointer mono_aot_get_trampoline_full       (const char *name, MonoTrampInfo **out_tinfo);
-gpointer mono_aot_get_unbox_trampoline      (MonoMethod *method);
-gpointer mono_aot_get_lazy_fetch_trampoline (guint32 slot);
-gpointer mono_aot_get_static_rgctx_trampoline (gpointer ctx, gpointer addr);
-gpointer mono_aot_get_imt_trampoline        (MonoVTable *vtable, MonoDomain *domain, MonoIMTCheckItem **imt_entries, int count, gpointer fail_tramp);
-gpointer mono_aot_get_gsharedvt_arg_trampoline(gpointer arg, gpointer addr);
-guint8*  mono_aot_get_unwind_info           (MonoJitInfo *ji, guint32 *unwind_info_len);
-guint32  mono_aot_method_hash               (MonoMethod *method);
-MonoMethod* mono_aot_get_array_helper_from_wrapper (MonoMethod *method);
-void     mono_aot_set_make_unreadable       (gboolean unreadable);
-gboolean mono_aot_is_pagefault              (void *ptr);
-void     mono_aot_handle_pagefault          (void *ptr);
-void     mono_aot_register_jit_icall        (const char *name, gpointer addr);
-guint32  mono_aot_find_method_index         (MonoMethod *method);
-void     mono_aot_init_llvm_method          (gpointer aot_module, guint32 method_index);
-void     mono_aot_init_gshared_method_this  (gpointer aot_module, guint32 method_index, MonoObject *this_ins);
-void     mono_aot_init_gshared_method_mrgctx  (gpointer aot_module, guint32 method_index, MonoMethodRuntimeGenericContext *rgctx);
-void     mono_aot_init_gshared_method_vtable  (gpointer aot_module, guint32 method_index, MonoVTable *vtable);
-
-/* This is an exported function */
-MONO_API void     mono_aot_register_module           (gpointer *aot_info);
-
-/* These are used to load the AOT data for aot images compiled with MONO_AOT_FILE_FLAG_SEPARATE_DATA */
-/*
- * Return the AOT data for ASSEMBLY. SIZE is the size of the data. OUT_HANDLE should be set to a handle which is later
- * passed to the free function.
- */
-typedef unsigned char* (*MonoLoadAotDataFunc)          (MonoAssembly *assembly, int size, gpointer user_data, void **out_handle);
-/* Not yet used */
-typedef void  (*MonoFreeAotDataFunc)          (MonoAssembly *assembly, int size, gpointer user_data, void *handle);
-MONO_API void mono_install_load_aot_data_hook (MonoLoadAotDataFunc load_func, MonoFreeAotDataFunc free_func, gpointer user_data);
-
-=======
->>>>>>> 9c2c689a612... Mini h cleanup (#6072)
 void     mono_xdebug_init                   (const char *xdebug_opts);
 void     mono_save_xdebug_info              (MonoCompile *cfg);
 void     mono_save_trampoline_xdebug_info   (MonoTrampInfo *info);
