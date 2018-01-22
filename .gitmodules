@@ -11,8 +11,8 @@
     branch = master
 [submodule "external/mono"]
     path = external/mono
-    url = ../../mono/mono.git
-    branch = 2017-10
+    url = https://github.com/lewurm/mono.git
+    branch = 2017-10-interp-static-lib
 [submodule "external/MonoTouch.Dialog"]
     path = external/MonoTouch.Dialog
     url = ../../migueldeicaza/MonoTouch.Dialog.git
