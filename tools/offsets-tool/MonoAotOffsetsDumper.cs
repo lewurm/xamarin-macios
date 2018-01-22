@@ -818,7 +818,7 @@ namespace CppSharp
                 "SeqPointInfo",
                 "DynCallArgs", 
                 "MonoLMFTramp",
-                "InterpMethodArguments",
+                "CallContext",
             };
 
             DumpClasses(writer, ctx, optionalTypes, optional: true);

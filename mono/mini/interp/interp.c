@@ -275,8 +275,7 @@ interp_get_remoting_invoke (gpointer imethod, MonoError *error)
 
 	g_assert (mono_use_interpreter);
 
-	MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke (imethod_cast->method, error);
-	return_val_if_nok (error, NULL);
+	MonoMethod *remoting_invoke_method = mono_marshal_get_remoting_invoke (imethod_cast->method);
 	return mono_interp_get_imethod (mono_domain_get (), remoting_invoke_method, error);
 #else
 	g_assert_not_reached ();
@@ -2625,18 +2624,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 				else
 					goto exit_frame;
 			}
-<<<<<<< HEAD
-
-			if (child_frame.ex) {
-				/*
-				 * An exception occurred, need to run finally, fault and catch handlers..
-				 */
-				frame->ex = child_frame.ex;
-				goto handle_exception;;
-			}
-=======
 			CHECK_CHILD_EX (child_frame, ip - 2);
->>>>>>> 29826908fc7... [interp] Make the interpreter use the JIT exception handling code. (#5943)
 
 			/* need to handle typedbyref ... */
 			*sp = *endsp;
@@ -2672,17 +2660,7 @@ interp_exec_method_full (InterpFrame *frame, ThreadContext *context, guint16 *st
 					goto exit_frame;
 			}
 
-<<<<<<< HEAD
-			if (child_frame.ex) {
-				/*
-				 * An exception occurred, need to run finally, fault and catch handlers..
-				 */
-				frame->ex = child_frame.ex;
-				goto handle_finally;
-			}
-=======
 			CHECK_CHILD_EX (child_frame, ip - 2);
->>>>>>> 29826908fc7... [interp] Make the interpreter use the JIT exception handling code. (#5943)
 			MINT_IN_BREAK;
 		}
 
@@ -4519,8 +4497,6 @@ array_constructed:
 				else
 					goto exit_frame;
 			}
-			if (frame->ex != NULL)
-				goto handle_exception;
 			ip += 2;
 			MINT_IN_BREAK;
 		MINT_IN_CASE(MINT_MONO_LDPTR) 
@@ -4550,7 +4526,7 @@ array_constructed:
 			goto exit_frame;
 		MINT_IN_CASE(MINT_MONO_TLS) {
 			MonoTlsKey key = *(gint32 *)(ip + 1);
-			sp->data.p = ((gpointer (*)()) mono_tls_get_tls_getter (key, FALSE)) ();
+			sp->data.p = ((gpointer (*)(void)) mono_tls_get_tls_getter (key, FALSE)) ();
 			sp++;
 			ip += 3;
 			MINT_IN_BREAK;
