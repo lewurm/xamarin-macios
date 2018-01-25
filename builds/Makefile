@@ -1264,7 +1264,8 @@ $(eval $(2)_CONFIGURE_FLAGS=--build=i386-apple-darwin10 \
 			$(XAMARIN_IOS_CONFIGURE_FLAGS) \
 			)
 
-$(eval $(2)_ACVARS= mono_cv_uscore=yes \
+$(eval $(2)_ACVARS= $(COMMON_ACVARS) \
+		mono_cv_uscore=yes \
 		mono_cv_sizeof_sunpath=104 \
 		ac_cv_func_posix_getpwuid_r=yes \
 		ac_cv_func_finite=no \
@@ -1495,6 +1496,7 @@ WATCHOS_CONFIGURE_FLAGS =                        \
 	$(BITCODE_CONFIGURE_FLAGS)
 
 WATCHOS_ACVARS =                    \
+	$(COMMON_ACVARS)                \
 	mono_cv_uscore=yes              \
 	mono_cv_sizeof_sunpath=104      \
 	ac_cv_func_posix_getpwuid_r=yes \
@@ -1682,6 +1684,7 @@ TVOS_CONFIGURE_FLAGS =                           \
 # explicitly disable dtrace, since it requires inline assembly, which is disabled on AppleTV (and mono's configure.ac doesn't know that (yet at least))
 
 TVOS_ACVARS =                       \
+	$(COMMON_ACVARS)                \
 	mono_cv_uscore=yes              \
 	mono_cv_sizeof_sunpath=104      \
 	ac_cv_func_posix_getpwuid_r=yes \
