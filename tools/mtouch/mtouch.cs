@@ -453,6 +453,7 @@ namespace Xamarin.Bundler
 			bool enable_debug = app.EnableDebug;
 			bool enable_debug_symbols = app.PackageManagedDebugSymbols;
 			bool llvm_only = app.EnableLLVMOnlyBitCode;
+			bool interp = app.UseInterpreter;
 			string arch = abi.AsArchString ();
 
 			args.Append ("--debug ");
@@ -460,7 +461,7 @@ namespace Xamarin.Bundler
 			if (enable_llvm)
 				args.Append ("--llvm ");
 
-			if (!llvm_only)
+			if (!llvm_only && !interp)
 				args.Append ("-O=gsharedvt ");
 			args.Append (app.AotOtherArguments).Append (" ");
 			args.Append ("--aot=mtriple=");
@@ -470,6 +471,8 @@ namespace Xamarin.Bundler
 			args.Append (app.AotArguments);
 			if (llvm_only)
 				args.Append ("llvmonly,");
+			else if (interp)
+				args.Append ("interp,");
 			else
 				args.Append ("full,");
 
@@ -553,6 +556,8 @@ namespace Xamarin.Bundler
 
 			register_assemblies.AppendLine ("\tguint32 exception_gchandle = 0;");
 			foreach (var s in assemblies) {
+				if (app.UseInterpreter && s.FileName != "mscorlib.dll")
+					continue;
 				if ((abi & Abi.SimulatorArchMask) == 0) {
 					var info = s.AssemblyDefinition.Name.Name;
 					info = EncodeAotSymbol (info);
@@ -633,6 +638,10 @@ namespace Xamarin.Bundler
 						sw.WriteLine ("xamarin_profiler_symbol_def xamarin_profiler_symbol = NULL;");
 					}
 
+					if (app.UseInterpreter) {
+						sw.WriteLine ("extern \"C\" { void mono_ee_interp_init (const char *); }");
+					}
+
 					sw.WriteLine ("void xamarin_setup_impl ()");
 					sw.WriteLine ("{");
 
@@ -641,7 +650,11 @@ namespace Xamarin.Bundler
 
 					if (app.EnableLLVMOnlyBitCode)
 						sw.WriteLine ("\tmono_jit_set_aot_mode (MONO_AOT_MODE_LLVMONLY);");
-					
+					else if (app.UseInterpreter) {
+						sw.WriteLine ("\tmono_ee_interp_init (NULL);");
+						sw.WriteLine ("\tmono_jit_set_aot_mode (MONO_AOT_MODE_INTERP);");
+					}
+
 					if (assembly_location.Length > 0)
 						sw.WriteLine ("\txamarin_set_assembly_directories (&assembly_locations);");
 
@@ -856,6 +869,9 @@ namespace Xamarin.Bundler
 
 			// If we are asked to run with concurrent sgen we also need to pass environment variables
 			if (app.EnableSGenConc)
+				return false;
+
+			if (app.UseInterpreter)
 				return false;
 
 			if (app.Registrar == RegistrarMode.Static)
