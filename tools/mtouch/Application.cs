@@ -2110,7 +2110,7 @@ namespace Xamarin.Bundler {
 
 		public void BundleAssemblies ()
 		{
-			var strip = ManagedStrip && IsDeviceBuild && !EnableDebug && !PackageManagedDebugSymbols;
+			var strip = !UseInterpreter && ManagedStrip && IsDeviceBuild && !EnableDebug && !PackageManagedDebugSymbols;
 
 			var grouped = Targets.SelectMany ((Target t) => t.Assemblies).GroupBy ((Assembly asm) => asm.Identity);
 			foreach (var @group in grouped) {

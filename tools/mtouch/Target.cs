@@ -890,6 +890,10 @@ namespace Xamarin.Bundler
 
 			// Here we create the tasks to run the AOT compiler.
 			foreach (var a in Assemblies) {
+				/* interpreter only requires a few stubs that are attached to mscorlib.dll */
+				if (App.UseInterpreter && a.FileName != ("mscorlib.dll")) {
+					continue;
+				}
 				foreach (var abi in GetArchitectures (a.BuildTarget)) {
 					a.CreateAOTTask (abi);
 				}
@@ -900,6 +904,10 @@ namespace Xamarin.Bundler
 			foreach (var @group in grouped) {
 				var name = @group.Key;
 				var assemblies = @group.AsEnumerable ().ToArray ();
+				if (assemblies.Length <= 0) {
+					Driver.Log ("skipping");
+					continue;
+				}
 				// We ensure elsewhere that all assemblies in a group have the same build target.
 				var build_target = assemblies [0].BuildTarget;
 
@@ -910,8 +918,10 @@ namespace Xamarin.Bundler
 					string compiler_output;
 					var compiler_flags = new CompilerFlags (this);
 					var link_dependencies = new List<CompileTask> ();
-					var infos = assemblies.Select ((asm) => asm.AotInfos [abi]).ToList ();
+					var infos = assemblies.Where ((asm) => asm.AotInfos.ContainsKey(abi)).Select ((asm) => asm.AotInfos [abi]).ToList ();
 					var aottasks = infos.Select ((info) => info.Task);
+					if (aottasks == null)
+						continue;
 
 					var existingLinkTask = infos.Where ((v) => v.LinkTask != null).Select ((v) => v.LinkTask).ToList ();
 					if (existingLinkTask.Count > 0) {
@@ -1066,6 +1076,9 @@ namespace Xamarin.Bundler
 				}
 			}
 
+			if (App.UseInterpreter)
+				return;
+
 			// Code in one assembly (either in a P/Invoke or a third-party library) can depend on a third-party library in another assembly.
 			// This means that we must always build assemblies only when all their dependent assemblies have been built, so that 
 			// we can link (natively) with the frameworks/dylibs for those dependent assemblies.
@@ -1123,6 +1136,9 @@ namespace Xamarin.Bundler
 					// Circular dependencies shouldn't happen, but still make sure, since it's technically possible
 					// for users to do it.
 					foreach (var abi in GetArchitectures (asm.BuildTarget)) {
+						Driver.Log ("abi: " + abi);
+						Driver.Log ("asm.AotInfos: " + asm.AotInfos.ToString ());
+
 						var target_task = asm.AotInfos [abi].LinkTask;
 						var dependent_tasks = dependent_assemblies.Select ((v) => v.AotInfos [abi].LinkTask);
 
@@ -1408,6 +1424,11 @@ namespace Xamarin.Bundler
 				default:
 					throw ErrorHelper.CreateError (100, "Invalid assembly build target: '{0}'. Please file a bug report with a test case (http://bugzilla.xamarin.com).", App.LibProfilerLinkMode);
 				}
+			}
+
+			if (App.UseInterpreter) {
+				string libinterp = Path.Combine (libdir, "libmono-ee-interp.a");
+				linker_flags.AddLinkWith (libinterp);
 			}
 
 			if (!string.IsNullOrEmpty (App.UserGccFlags))
