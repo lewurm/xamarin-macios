@@ -29,12 +29,12 @@ namespace xharness
 				"\t\t{0}.Release-bitcode|iPhoneSimulator.Build.0 = Release-bitcode|Any CPU\n" +
 				"\t\t{0}.Release-bitcode|iPhone.ActiveCfg = Release-bitcode|Any CPU\n" +
 				"\t\t{0}.Release-bitcode|iPhone.Build.0 = Release-bitcode|Any CPU\n" +
-                "\t\t{0}.Release-interpreter|Any CPU.ActiveCfg = Release-interpreter|Any CPU\n" +
-                "\t\t{0}.Release-interpreter|Any CPU.Build.0 = Release-interpreter|Any CPU\n" +
-                "\t\t{0}.Release-interpreter|iPhoneSimulator.ActiveCfg = Release-interpreter|Any CPU\n" +
-                "\t\t{0}.Release-interpreter|iPhoneSimulator.Build.0 = Release-interpreter|Any CPU\n" +
-                "\t\t{0}.Release-interpreter|iPhone.ActiveCfg = Release-interpreter|Any CPU\n" +
-                "\t\t{0}.Release-interpreter|iPhone.Build.0 = Release-interpreter|Any CPU\n" +
+                "\t\t{0}.Release-interpreter64|Any CPU.ActiveCfg = Release-interpreter64|Any CPU\n" +
+                "\t\t{0}.Release-interpreter64|Any CPU.Build.0 = Release-interpreter64|Any CPU\n" +
+                "\t\t{0}.Release-interpreter64|iPhoneSimulator.ActiveCfg = Release-interpreter64|Any CPU\n" +
+                "\t\t{0}.Release-interpreter64|iPhoneSimulator.Build.0 = Release-interpreter64|Any CPU\n" +
+                "\t\t{0}.Release-interpreter64|iPhone.ActiveCfg = Release-interpreter64|Any CPU\n" +
+                "\t\t{0}.Release-interpreter64|iPhone.Build.0 = Release-interpreter64|Any CPU\n" +
 				"\t\t{0}.Release|Any CPU.ActiveCfg = Release|Any CPU\n" +
 				"\t\t{0}.Release|Any CPU.Build.0 = Release|Any CPU\n" +
 				"\t\t{0}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU\n" + 
@@ -127,14 +127,14 @@ namespace xharness
 				writer.WriteLine ("\t\tDebug|iPhone = Debug|iPhone");
 				writer.WriteLine ("\t\tRelease|iPhone = Release|iPhone");
 				writer.WriteLine ("\t\tRelease-bitcode|iPhone = Release-bitcode|iPhone");
-                writer.WriteLine ("\t\tRelease-interpreter|iPhone = Release-interpreter|iPhone");
+                writer.WriteLine ("\t\tRelease-interpreter64|iPhone = Release-interpreter64|iPhone");
 				writer.WriteLine ("\t\tDebug|Any CPU = Debug|Any CPU");
 				writer.WriteLine ("\t\tRelease|Any CPU = Release|Any CPU");
 				writer.WriteLine ("\tEndGlobalSection");
 
 				writer.WriteLine ("\tGlobalSection(ProjectConfigurationPlatforms) = postSolution");
 				var exePlatforms = new string[] { "iPhone", "iPhoneSimulator" };
-				var configurations = new string[] { "Debug", "Release", "Release-bitcode", "Release-interpreter" };
+                var configurations = new string[] { "Debug", "Release", "Release-bitcode", "Release-interpreter64" };
 				foreach (var target in targets) {
 					if (target.IsExe && exeTarget != null && target != exeTarget)
 						continue;

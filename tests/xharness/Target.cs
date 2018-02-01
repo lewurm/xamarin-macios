@@ -77,8 +77,8 @@ namespace xharness
 			}
 
             if (SupportsInterpreter) {
-                inputProject.CloneConfiguration("iPhone", "Release", "Release-interpreter");
-                inputProject.AddExtraMtouchArgs("--interpreter", "iPhone", "Release-interpreter"); 
+                inputProject.CloneConfiguration("iPhone", "Release", "Release-interpreter64");
+                inputProject.AddExtraMtouchArgs("--interpreter", "iPhone", "Release-interpreter64"); 
             }
 
 			if (!IsMultiArchitecture && IsExe) {
