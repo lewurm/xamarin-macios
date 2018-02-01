@@ -43,6 +43,7 @@ namespace xharness
 		protected virtual string Imports { get { throw new NotImplementedException (); } }
 		protected virtual string BindingsImports { get { throw new NotImplementedException (); } }
 		protected virtual bool SupportsBitcode { get { return false; } }
+        protected virtual bool SupportsInterpreter { get { return false; } }
 		public virtual bool IsMultiArchitecture { get { return false; } }	
 		public virtual string SimulatorArchitectures { get { throw new NotImplementedException (); } }
 		public virtual string DeviceArchitectures { get { throw new NotImplementedException (); } }
@@ -74,6 +75,11 @@ namespace xharness
 				inputProject.AddExtraMtouchArgs ("--bitcode:full", "iPhone", "Release-bitcode");
 				inputProject.SetMtouchUseLlvm (true, "iPhone", "Release-bitcode");
 			}
+
+            if (SupportsInterpreter) {
+                inputProject.CloneConfiguration("iPhone", "Release", "Release-interpreter");
+                inputProject.AddExtraMtouchArgs("--interpreter", "iPhone", "Release-interpreter"); 
+            }
 
 			if (!IsMultiArchitecture && IsExe) {
 				inputProject.DeleteConfiguration ("iPhone", "Debug32");
