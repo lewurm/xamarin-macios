@@ -96,6 +96,12 @@ namespace xharness
 			}
 		}
 
+        protected override bool SupportsInterpreter {
+            get {
+                return true;
+            }
+        }
+
 		protected override void ExecuteInternal ()
 		{
 			// Nothing to do here

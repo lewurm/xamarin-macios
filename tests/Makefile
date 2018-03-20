@@ -53,7 +53,7 @@ else
 CONFIG=Release
 endif
 else
-CONFIG=Debug
+CONFIG=Release-interpreter
 endif
 
 ifeq ($(V),)
