@@ -1238,7 +1238,7 @@ define PlatformBuildTemplate
 # Avoid passing the -arch flag twice in CFLAGS since it disables ccache
 $(eval $(2)_BASE_CPPFLAGS=-DSMALL_CONFIG -DDISABLE_POLICY_EVIDENCE=1 -DDISABLE_PROCESS_HANDLING=1 -D_XOPEN_SOURCE -DMONOTOUCH=1 -DHOST_IOS -DHAVE_LARGE_FILE_SUPPORT=1 -Wl,-application_extension -miphoneos-version-min=$(6) -isysroot $(PLATFORM_SDK))
 $(eval $(2)_CPPFLAGS=$($(2)_BASE_CPPFLAGS) -arch $(1))
-$(eval $(2)_CFLAGS=-O2 -gdwarf-2 $($(2)_BASE_CPPFLAGS) $(DEVICE_BUILD_CFLAGS) $(IOS_BITCODE_CFLAGS))
+$(eval $(2)_CFLAGS=-O0 -gdwarf-2 $($(2)_BASE_CPPFLAGS) $(DEVICE_BUILD_CFLAGS) $(IOS_BITCODE_CFLAGS))
 $(eval $(2)_CXXFLAGS=$($(2)_CPPFLAGS) $(IOS_BITCODE_CXXFLAGS))
 $(eval $(2)_LDFLAGS=-arch $(1) $(IOS_BITCODE_LDFLAGS) $(COMMON_LDFLAGS))
 $(eval $(2)_CONFIGURE_FLAGS=--build=i386-apple-darwin10 \

@@ -234,7 +234,7 @@ namespace Foundation {
 			var c = GetCount (handle);
 			string [] ret = new string [c];
 
-			for (nuint i = 0; i < c; i++)
+			for (uint i = 0; i < c; i++)
 				ret [i] = NSString.FromHandle (GetAtIndex (handle, i));
 			return ret;
 		}
