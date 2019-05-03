@@ -1348,7 +1348,7 @@ namespace Xamarin.Bundler
 				registration_methods.Add ("xamarin_create_classes");
 			}
 
-			if (App.Registrar == RegistrarMode.Dynamic && App.IsSimulatorBuild && App.LinkMode == LinkMode.None) {
+			if (App.Registrar == RegistrarMode.Dynamic && App.LinkMode == LinkMode.None) {
 				string method;
 				string library;
 				switch (App.Platform) {
@@ -1414,7 +1414,7 @@ namespace Xamarin.Bundler
 		{
 			if (App.Embeddinator && App.IsDeviceBuild) {
 				build_tasks.AddRange (embeddinator_tasks);
-				return null;
+				return Array.Empty<NativeLinkTask> ();
 			}
 
 			foreach (var abi in Abis) {
@@ -1586,7 +1586,6 @@ namespace Xamarin.Bundler
 		public class MonoNativeInfo
 		{
 			public bool RequireMonoNative { get; set; }
-			public bool RequireGss { get; set; }
 
 			public void Load (string filename)
 			{
@@ -1603,9 +1602,6 @@ namespace Xamarin.Bundler
 							case "RequireMonoNative":
 								RequireMonoNative = value;
 								break;
-							case "RequireGss":
-								RequireGss = value;
-								break;
 							default:
 								throw ErrorHelper.CreateError (99, $"Internal error: invalid type string while loading cached Mono.Native info: {typestr}. Please file a bug report with a test case (https://github.com/xamarin/xamarin-macios/issues/new).");
 						}
@@ -1617,7 +1613,6 @@ namespace Xamarin.Bundler
 			{
 				using (var writer = new StreamWriter (filename)) {
 					writer.WriteLine ("RequireMonoNative={0}", RequireMonoNative);
-					writer.WriteLine ("RequireGss={0}", RequireGss);
 				}
 			}
 		}
@@ -1636,7 +1631,6 @@ namespace Xamarin.Bundler
 					mono_native_info.Load (cache_location);
 				} else {
 					mono_native_info.RequireMonoNative = LinkContext?.RequireMonoNative ?? true;
-					mono_native_info.RequireGss = LinkContext?.RequireGss ?? true;
 					mono_native_info.Save (cache_location);
 				}
 
@@ -1663,10 +1657,8 @@ namespace Xamarin.Bundler
 				compiler_flags.AddLinkWith (libnative);
 				switch (app.Platform) {
 				case ApplePlatform.iOS:
-					if (MonoNative.RequireGss) {
-						Driver.Log (3, "Adding GSS framework reference.");
-						compiler_flags.AddFramework ("GSS");
-					}
+					Driver.Log (3, "Adding GSS framework reference.");
+					compiler_flags.AddFramework ("GSS");
 					break;
 				}
 				break;
@@ -1724,6 +1716,8 @@ namespace Xamarin.Bundler
 				else if (Is64Build)
 					launcher.Append ("64");
 				launcher.Append ("-sgen");
+				if (Directory.Exists (targetExecutable))
+					throw new ArgumentException ($"{targetExecutable} is a directory.");
 				File.Copy (launcher.ToString (), targetExecutable);
 				File.SetLastWriteTime (targetExecutable, DateTime.Now);
 			} catch (MonoTouchException) {

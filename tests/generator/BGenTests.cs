@@ -336,7 +336,6 @@ namespace GeneratorTests
 		}
 
 		[Test]
-		[Ignore ("Fails with: api.cs(10,17): error CS0246: The type or namespace name `CBUUID' could not be found. Are you missing `CoreBluetooth' using directive?")]
 		public void GenericStrongDictionary ()
 		{
 			BuildFile (Profile.iOS, "generic-strong-dictionary.cs");
@@ -588,6 +587,12 @@ namespace GeneratorTests
 
 		[Test]
 		public void GHIssue5692 () => BuildFile (Profile.iOS, "ghissue5692.cs");
+
+		public void RefOutParameters ()
+		{
+			BuildFile (Profile.macOSMobile, true, "tests/ref-out-parameters.cs");
+
+		}
 
 		BGenTool BuildFile (Profile profile, params string [] filenames)
 		{

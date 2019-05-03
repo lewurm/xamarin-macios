@@ -167,26 +167,33 @@ all-local:: $(BUNDLE_ZIP) $(APIDIFF_DIR)/api-diff.html
 # Rules to re-create the reference infos from the curretn stable 'bundle.zip. assemblies
 
 # split the URL in words based on the path separator, and then chose the 6th word (the hash) in the bundle zip filename
-BUNDLE_ZIP=bundle-$(word 6,$(subst /, ,$(APIDIFF_REFERENCES))).zip
+BUNDLE_ZIP=$(APIDIFF_DIR)/bundle-$(word 6,$(subst /, ,$(APIDIFF_REFERENCES))).zip
 $(BUNDLE_ZIP):
 	# download to a temporary filename so interrupted downloads won't prevent re-downloads.
-	$(Q_GEN) curl -L $(APIDIFF_REFERENCES) > $@.tmp
+	$(Q) if test -f ~/Library/Caches/xamarin-macios/$(notdir $@); then \
+		echo "Found a cached version of $(APIDIFF_REFERENCES)) in ~/Library/Caches/xamarin-macios/$(notdir $@)."; \
+		$(CP) ~/Library/Caches/xamarin-macios/$(notdir $@) $@.tmp; \
+	else \
+		curl -L $(APIDIFF_REFERENCES) > $@.tmp; \
+	fi
 	$(Q) mv $@.tmp $@
 
-.unzip.stamp: $(BUNDLE_ZIP)
-	$(Q) rm -Rf temp
-	$(Q_GEN) unzip -d temp $(BUNDLE_ZIP)
+UNZIP_STAMP=$(APIDIFF_DIR)/.unzip.stamp
+$(UNZIP_STAMP): $(BUNDLE_ZIP)
+	$(Q) rm -Rf temp/downloads
+	$(Q) mkdir -p temp
+	$(Q_GEN) unzip -q -d temp/downloads $(BUNDLE_ZIP)
 	$(Q) touch $@
 
 # the semi-colon at the end means an empty recipe, and is required for make to consider pattern rules
-temp/%.dll: .unzip.stamp ;
+temp/downloads/%.dll: $(UNZIP_STAMP) ;
 
 IOS_REFS     = $(foreach file,$(IOS_ASSEMBLIES),$(APIDIFF_DIR)/updated-references/xi/$(file).xml)
 MAC_REFS     = $(foreach file,$(MAC_ASSEMBLIES),$(APIDIFF_DIR)/updated-references/xm/$(file).xml)
 WATCHOS_REFS = $(foreach file,$(WATCHOS_ASSEMBLIES),$(APIDIFF_DIR)/updated-references/xi/$(file).xml)
 TVOS_REFS    = $(foreach file,$(TVOS_ASSEMBLIES),$(APIDIFF_DIR)/updated-references/xi/$(file).xml)
 
-$(APIDIFF_DIR)/references/xi/%.xml: temp/%.dll $(MONO_API_INFO)
+$(APIDIFF_DIR)/references/xi/%.xml: temp/downloads/%.dll $(MONO_API_INFO)
 	$(Q) mkdir -p $(dir $@) $(dir $(APIDIFF_DIR)/references/xi/$*)
 	$(QF_GEN) mono --debug $(MONO_API_INFO) $< -o $(APIDIFF_DIR)/references/xi/$*.xml
 
@@ -194,7 +201,7 @@ $(APIDIFF_DIR)/updated-references/xi/%.xml: $(IOS_DESTDIR)$(MONOTOUCH_PREFIX)/li
 	$(Q) mkdir -p $(dir $@) $(dir $(APIDIFF_DIR)/references/xi/$*)
 	$(QF_GEN) mono --debug $(MONO_API_INFO) $< -o $(APIDIFF_DIR)/references/xi/$*.xml
 
-$(APIDIFF_DIR)/references/xm/%.xml: temp/%.dll $(MONO_API_INFO)
+$(APIDIFF_DIR)/references/xm/%.xml: temp/downloads/%.dll $(MONO_API_INFO)
 	$(Q) mkdir -p $(dir $@) $(dir $(APIDIFF_DIR)/references/xm/$*)
 	$(QF_GEN) mono --debug $(MONO_API_INFO) $< -o $(APIDIFF_DIR)/references/xm/$*.xml
 
@@ -221,7 +228,7 @@ verify-reference-assemblies-mac: $(APIDIFF_DIR)/temp/native-32/Xamarin.Mac.xml $
 
 clean-local::
 	rm -rf temp references diff *.exe* api-diff.html
-	rm -rf *.dll* bundle-*.zip .unzip.stamp
+	rm -rf *.dll* bundle-*.zip $(UNZIP_STAMP)
 	rm -rf ios-*.md tvos-*.md watchos-*.md macos-*.md
 
 DIRS += $(APIDIFF_DIR)/temp $(APIDIFF_DIR)/diff
@@ -291,7 +298,7 @@ ifdef INCLUDE_TVOS
 	@echo "@MonkeyWrench: AddFile: $(CURDIR)/diff/ios-to-tvos.html"
 endif
 endif
-	$(Q) $(MAKE) .unzip.stamp
+	$(Q) $(MAKE) $(UNZIP_STAMP)
 	$(Q) $(MAKE) all -j8
 	$(Q) $(MAKE) -j8 ios-markdown tvos-markdown watchos-markdown macos-markdown
 	$(Q) $(CP) api-diff.html index.html

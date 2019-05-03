@@ -898,19 +898,23 @@ namespace Registrar {
 
 		public void GetMethodDescriptionAndObject (Type type, IntPtr selector, bool is_static, IntPtr obj, ref IntPtr mthis, IntPtr desc)
 		{
-			var sel = new Selector (selector);
-			var res = GetMethodNoThrow (type, type, sel.Name, is_static);
+			var sel = Selector.GetName (selector);
+			var res = GetMethodNoThrow (type, type, sel, is_static);
 			if (res == null)
-				throw ErrorHelper.CreateError (8006, "Failed to find the selector '{0}' on the type '{1}'", sel.Name, type.FullName);
+				throw ErrorHelper.CreateError (8006, "Failed to find the selector '{0}' on the type '{1}'", sel, type.FullName);
 
 			if (res.IsInstanceCategory) {
 				mthis = IntPtr.Zero;
 			} else {
-				var nsobj = Runtime.GetNSObject (obj, Runtime.MissingCtorResolution.ThrowConstructor1NotFound, true, selector, ObjectWrapper.Convert (res.Method));
-				mthis = ObjectWrapper.Convert (nsobj);
-				if (res.Method.ContainsGenericParameters) {
-					res.WriteUnmanagedDescription (desc, Runtime.FindClosedMethod (nsobj.GetType (), res.Method));
-					return;
+				try {
+					var nsobj = Runtime.GetNSObject (obj, Runtime.MissingCtorResolution.ThrowConstructor1NotFound, true);
+					mthis = ObjectWrapper.Convert (nsobj);
+					if (res.Method.ContainsGenericParameters) {
+						res.WriteUnmanagedDescription (desc, Runtime.FindClosedMethod (nsobj.GetType (), res.Method));
+						return;
+					}
+				} catch (Exception e) {
+					throw ErrorHelper.CreateError (8035, e, $"Failed to get the 'this' instance in a method call to {res.DescriptiveMethodName}.");
 				}
 			}
 
@@ -919,10 +923,10 @@ namespace Registrar {
 
 		public void GetMethodDescription (Type type, IntPtr selector, bool is_static, IntPtr desc)
 		{
-			var sel = new Selector (selector);
-			var res = GetMethodNoThrow (type, type, sel.Name, is_static);
+			var sel = Selector.GetName (selector);
+			var res = GetMethodNoThrow (type, type, sel, is_static);
 			if (res == null)
-				throw ErrorHelper.CreateError (8006, "Failed to find the selector '{0}' on the type '{1}'", sel.Name, type.FullName);
+				throw ErrorHelper.CreateError (8006, "Failed to find the selector '{0}' on the type '{1}'", sel, type.FullName);
 			if (type.IsGenericType && res.Method is ConstructorInfo)
 				throw ErrorHelper.CreateError (4133, "Cannot construct an instance of the type '{0}' from Objective-C because the type is generic.", type.FullName);
 

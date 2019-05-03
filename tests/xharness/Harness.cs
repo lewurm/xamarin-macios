@@ -78,6 +78,7 @@ namespace xharness
 		public string WatchOSExtensionTemplate { get; set; }
 		public string TodayContainerTemplate { get; set; }
 		public string TodayExtensionTemplate { get; set; }
+		public string BCLTodayExtensionTemplate { get; set; }
 		public string MONO_PATH { get; set; } // Use same name as in Makefiles, so that a grep finds it.
 		public string TVOS_MONO_PATH { get; set; } // Use same name as in Makefiles, so that a grep finds it.
 		public bool INCLUDE_IOS { get; set; }
@@ -87,7 +88,8 @@ namespace xharness
 		public string JENKINS_RESULTS_DIRECTORY { get; set; } // Use same name as in Makefiles, so that a grep finds it.
 		public string MAC_DESTDIR { get; set; }
 		public string IOS_DESTDIR { get; set; }
-		public string MONO_SDK_DESTDIR { get; set; }
+		public string MONO_IOS_SDK_DESTDIR { get; set; }
+		public string MONO_MAC_SDK_DESTDIR { get; set; }
 		public bool IncludeMac32 { get; set; }
 		public bool ENABLE_XAMARIN { get; set; }
 
@@ -228,7 +230,8 @@ namespace xharness
 				SdkRoot = make_config ["XCODE_DEVELOPER_ROOT"];
 			if (string.IsNullOrEmpty (SdkRoot94))
 				SdkRoot94 = make_config ["XCODE94_DEVELOPER_ROOT"];
-			MONO_SDK_DESTDIR = make_config ["MONO_SDK_DESTDIR"];
+			MONO_IOS_SDK_DESTDIR = make_config ["MONO_IOS_SDK_DESTDIR"];
+			MONO_MAC_SDK_DESTDIR = make_config ["MONO_MAC_SDK_DESTDIR"];
 			ENABLE_XAMARIN = make_config.ContainsKey ("ENABLE_XAMARIN") && !string.IsNullOrEmpty (make_config ["ENABLE_XAMARIN"]);
 		}
 		 
@@ -377,6 +380,7 @@ namespace xharness
 
 			TodayContainerTemplate = Path.GetFullPath (Path.Combine (RootDirectory, "templates", "TodayContainer"));
 			TodayExtensionTemplate = Path.GetFullPath (Path.Combine (RootDirectory, "templates", "TodayExtension"));
+			BCLTodayExtensionTemplate = Path.GetFullPath (Path.Combine (RootDirectory, "bcl-test", "BCLTests", "templates", "today"));
 		}
 
 		Dictionary<string, string> make_config = new Dictionary<string, string> ();

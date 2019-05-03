@@ -719,7 +719,9 @@ It's possible to force the linker to keep the dynamic registrar by adding
 `--optimize=-remove-dynamic-registrar` to the additional mmp arguments in
 the project's Mac Build options.
 
-### <a name="MT8027"/>MT8027: Failed to marshal the Objective-C object {handle} (type: {managed_type}). Could not find an existing managed instance for this object, nor was it possible to create a new managed instance.
+<a name="MT8027" />
+
+### MM8027: Failed to marshal the Objective-C object {handle} (type: {managed_type}). Could not find an existing managed instance for this object, nor was it possible to create a new managed instance.
 
 This occurs when the Xamarin.Mac runtime finds an Objective-C object without a
 corresponding managed wrapper object, and when trying to create that managed
@@ -747,7 +749,76 @@ There are a few reasons this may happen:
 
 * It could be a bug in Xamarin.Mac. If this is the case, please file a [bug report](https://github.com/xamarin/xamarin-macios/issues/new).
 
-### <a name="MM8028"/>MM8028: The runtime function {function} has been linked away.
+<a name="MM8028" />
+
+### MM8028: The runtime function {function} has been linked away.
 
 This usually indicates a bug in Xamarin.Mac, because runtime functions should
 not be linked away if they're needed. Please [submit an issue](https://github.com/xamarin/xamarin-macios/wiki/Submitting-Bugs-&-Suggestions).
+
+<a name="MM8029" />
+
+### MM8029: Unable to marshal the {byref?} parameter {index} whose managed type is {type} to managed.
+
+This usually indicates a bug in Objective-C binding code.
+
+If the managed binding is from a third-party vendor, please contact the vendor.
+
+If the managed binding is shipped with Xamarin.Mac, please [submit an issue](https://github.com/xamarin/xamarin-macios/wiki/Submitting-Bugs-&-Suggestions).
+
+<a name="MM8030" />
+
+### MM8030: Unable to marshal the {byref?} parameter {index} whose managed type is {type} to Objective-C.
+
+This usually indicates a bug in Objective-C binding code.
+
+If the managed binding is from a third-party vendor, please contact the vendor.
+
+If the managed binding is shipped with Xamarin.Mac, please [submit an issue](https://github.com/xamarin/xamarin-macios/wiki/Submitting-Bugs-&-Suggestions).
+
+<a name="MM8031" />
+
+### MM8031: Unable to convert from an NSArray to a managed array of {type}.
+This usually indicates a bug in Objective-C binding code.
+
+If the managed binding is from a third-party vendor, please contact the vendor.
+
+If the managed binding is shipped with Xamarin.Mac, please [submit an issue](https://github.com/xamarin/xamarin-macios/wiki/Submitting-Bugs-&-Suggestions).
+
+<a name="MM8032" />
+
+### MM8032: Unable to convert from a managed array of {type} to an NSArray.
+
+This usually indicates a bug in Objective-C binding code.
+
+If the managed binding is from a third-party vendor, please contact the vendor.
+
+If the managed binding is shipped with Xamarin.Mac, please [submit an issue](https://github.com/xamarin/xamarin-macios/wiki/Submitting-Bugs-&-Suggestions).
+
+<a name="MM8033" />
+
+### MM8033: Unable to marshal the return value of type {type} to Objective-C.
+
+This usually indicates a bug in Objective-C binding code.
+
+If the managed binding is from a third-party vendor, please contact the vendor.
+
+If the managed binding is shipped with Xamarin.Mac, please [submit an issue](https://github.com/xamarin/xamarin-macios/wiki/Submitting-Bugs-&-Suggestions).
+
+<a name="MM8034" />
+
+### MM8034: Failed to lookup the required marshalling information.
+
+This exception will have an inner exception which gives the reason for the failure.
+
+<a name="MM8035" />
+
+### MM8035: Failed to get the 'this' instance in a method call to {method}.
+
+This exception will have an inner exception which gives the reason for the failure.
+
+<a name="MM8036" />
+
+### MM8036: Failed to marshal the value at index {index}.
+
+This exception will have an inner exception which gives the reason for the failure.
